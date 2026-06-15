@@ -1,0 +1,82 @@
+# services:
+#   postgres:
+#     image: postgres:16
+#     container_name: healthcare_postgres
+#     restart: always
+#     environment:
+#       POSTGRES_USER: rata
+#       POSTGRES_PASSWORD: rata
+#       POSTGRES_DB: auth_db
+#     ports:
+#       - "55432:5432"
+#     volumes:
+#       - rata_postgres_clean_data:/var/lib/postgresql/data
+
+# volumes:
+#   rata_postgres_clean_data:
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: healthcare_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: rata
+      POSTGRES_PASSWORD: rata
+      POSTGRES_DB: auth_db
+    ports:
+      - "55432:5432"
+    volumes:
+      - healthcare_postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: healthcare-redis
+    ports:
+      - "6379:6379"
+
+  auth-service:
+    build:
+      context: ./auth-service
+    container_name: auth_service
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      DATABASE_URL: postgresql://rata:rata@postgres:5432/auth_db?schema=public
+      JWT_SECRET: super-secret-auth-key
+      JWT_EXPIRES_IN: 1d
+      PORT: 3001
+    depends_on:
+      - postgres
+
+  schedule-service:
+    build:
+      context: ./schedule-service
+    container_name: schedule_service
+    restart: always
+    ports:
+      - "3002:3002"
+    environment:
+      DATABASE_URL: postgresql://rata:rata@postgres:5432/schedule_db?schema=public
+      AUTH_SERVICE_URL: http://auth-service:3001/graphql
+      PORT: 3002
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      - postgres
+      - auth-service
+      - redis
+
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    ports:
+      - "3003:3003"
+    depends_on:
+      - redis
+    env_file:
+      - ./notification-service/.env
+
+volumes:
+  healthcare_postgres_data:

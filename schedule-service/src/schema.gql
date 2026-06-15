@@ -1,0 +1,111 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateCustomerInput {
+  email: String!
+  name: String!
+}
+
+input CreateDoctorInput {
+  name: String!
+}
+
+input CreateScheduleInput {
+  customerId: String!
+  doctorId: String!
+  objective: String!
+  scheduledAt: String!
+}
+
+type CustomerModel {
+  createdAt: DateTime!
+  email: String!
+  id: String!
+  name: String!
+  updatedAt: DateTime!
+}
+
+type CustomerPagination {
+  data: [CustomerModel!]!
+  limit: Int!
+  page: Int!
+  total: Int!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type DoctorModel {
+  createdAt: DateTime!
+  id: String!
+  name: String!
+  updatedAt: DateTime!
+}
+
+type DoctorPagination {
+  data: [DoctorModel!]!
+  limit: Int!
+  page: Int!
+  total: Int!
+}
+
+type Mutation {
+  createCustomer(input: CreateCustomerInput!): CustomerModel!
+  createDoctor(input: CreateDoctorInput!): DoctorModel!
+  createSchedule(input: CreateScheduleInput!): ScheduleModel!
+  deleteCustomer(id: String!): CustomerModel!
+  deleteDoctor(id: String!): DoctorModel!
+  deleteSchedule(id: String!): ScheduleModel!
+  updateCustomer(input: UpdateCustomerInput!): CustomerModel!
+  updateDoctor(input: UpdateDoctorInput!): DoctorModel!
+  updateSchedule(input: UpdateScheduleInput!): ScheduleModel!
+}
+
+type Query {
+  customer(id: String!): CustomerModel!
+  customers(limit: Int, page: Int): CustomerPagination!
+  doctor(id: String!): DoctorModel!
+  doctors(limit: Int, page: Int): DoctorPagination!
+  healthCheck: String!
+  schedule(id: String!): ScheduleModel!
+  schedules(limit: Int, page: Int): SchedulePagination!
+}
+
+type ScheduleModel {
+  createdAt: DateTime!
+  customerId: String!
+  doctorId: String!
+  id: String!
+  objective: String!
+  scheduledAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type SchedulePagination {
+  data: [ScheduleModel!]!
+  limit: Int!
+  page: Int!
+  total: Int!
+}
+
+input UpdateCustomerInput {
+  email: String
+  id: String!
+  name: String
+}
+
+input UpdateDoctorInput {
+  id: String!
+  name: String!
+}
+
+input UpdateScheduleInput {
+  customerId: String
+  doctorId: String
+  id: String!
+  objective: String
+  scheduledAt: String
+}
